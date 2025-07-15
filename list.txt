@@ -1,3 +1,5 @@
+antiaim/angelwings-source
+antiaim/hysteria
 antiaim/luasense
 workshop/3d-bomb-timer
 workshop/account-manager
