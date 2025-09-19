@@ -1,4 +1,4 @@
-﻿local var_0_0 = require("gamesense/http")
+local var_0_0 = require("gamesense/http")
 local var_0_1 = require("gamesense/csgo_weapons")
 local var_0_2 = require("gamesense/easing")
 local var_0_3 = require("gamesense/pretty_json")
@@ -5737,195 +5737,6 @@ local function var_0_205(arg_139_0)
 	end
 end
 
-local function var_0_206(arg_140_0)
-	if arg_140_0 == "helper" or arg_140_0:match("^helper .*$") then
-		if not ui.get(var_0_144.title) then
-			return
-		end
-
-		local var_140_0 = false
-
-		if arg_140_0:match("^helper map_pattern%s*") then
-			if globals.mapname() ~= nil then
-				client.log("Raw map name: ", globals.mapname())
-				client.log("Resolved map name: ", var_0_92())
-				client.log("Map pattern: ", var_0_88())
-			else
-				client.error_log("You need to be in-game to use this command")
-			end
-		elseif arg_140_0 == "helper" or arg_140_0:match("^helper %s*$") or arg_140_0:match("^helper help%s*$") or arg_140_0:match("^helper %?%s*$") then
-			client.log("Helper console command system")
-
-			var_140_0 = true
-		elseif arg_140_0:match("^helper source stats%s*") then
-			if type(var_0_165) == "table" then
-				local var_140_1 = var_0_165:get_all_locations()
-				local var_140_2 = {}
-
-				for iter_140_0, iter_140_1 in pairs(var_140_1) do
-					if #iter_140_1 > 0 then
-						table.insert(var_140_2, iter_140_0)
-					end
-				end
-
-				table.sort(var_140_2)
-
-				local var_140_3 = {}
-				local var_140_4 = {
-					"MAP",
-					"Smoke",
-					"Flash",
-					"Molotov",
-					"HE Grenade",
-					"Movement",
-					"Location",
-					"Area",
-					" TOTAL "
-				}
-				local var_140_5 = {
-					"TOTAL",
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0
-				}
-
-				for iter_140_2 = 1, #var_140_2 do
-					local var_140_6 = {
-						var_140_2[iter_140_2],
-						0,
-						0,
-						0,
-						0,
-						0,
-						0,
-						0,
-						0
-					}
-					local var_140_7 = var_140_1[var_140_2[iter_140_2]]
-
-					for iter_140_3 = 1, #var_140_7 do
-						local var_140_8 = var_140_7[iter_140_3]
-						local var_140_9 = 7
-
-						if var_140_8.type == "grenade" then
-							for iter_140_4 = 1, #var_140_8.weapons do
-								local var_140_10 = var_140_8.weapons[iter_140_4]
-
-								if var_140_10.console_name == "weapon_smokegrenade" then
-									var_140_9 = 2
-								elseif var_140_10.console_name == "weapon_flashbang" then
-									var_140_9 = 3
-								elseif var_140_10.console_name == "weapon_molotov" then
-									var_140_9 = 4
-								elseif var_140_10.console_name == "weapon_hegrenade" then
-									var_140_9 = 5
-								end
-							end
-						elseif var_140_8.type == "movement" then
-							var_140_9 = 6
-						elseif var_140_8.type == "location" then
-							var_140_9 = 7
-						elseif var_140_8.type == "area" then
-							var_140_9 = 8
-						end
-
-						var_140_6[var_140_9] = var_140_6[var_140_9] + 1
-						var_140_5[var_140_9] = var_140_5[var_140_9] + 1
-						var_140_6[9] = var_140_6[9] + 1
-						var_140_5[9] = var_140_5[9] + 1
-					end
-
-					table.insert(var_140_3, var_140_6)
-				end
-
-				table.insert(var_140_3, {})
-				table.insert(var_140_3, var_140_5)
-
-				for iter_140_5 = #var_140_5, 2, -1 do
-					if var_140_5[iter_140_5] == 0 then
-						table.remove(var_140_4, iter_140_5)
-
-						for iter_140_6 = 1, #var_140_3 do
-							table.remove(var_140_3[iter_140_6], iter_140_5)
-						end
-					end
-				end
-
-				local var_140_11 = var_0_5(var_140_3, var_140_4, {
-					style = "Unicode"
-				})
-
-				client.log("Statistics for ", var_0_165.name, var_0_165.description ~= nil and string.format(" - %s", var_0_165.description) or "", ": \n", var_140_11, "\n")
-			else
-				client.error_log("No source selected")
-			end
-		elseif arg_140_0:match("^helper source export_repo%s*") then
-			if type(var_0_165) == "table" then
-				if var_0_165.type == "local" then
-					client.error_log("Not yet implemented")
-				else
-					client.error_log("You can only export a local source")
-				end
-			else
-				client.error_log("No source selected")
-			end
-		elseif arg_140_0:match("^helper source%s*$") then
-			if type(var_0_165) == "table" then
-				client.log("Selected source: ", var_0_165.name, " (", var_0_165.type, ")")
-				client.log("Description: ", tostring(var_0_165.description))
-				client.log("Last updated: ", var_0_165.update_timestamp and string.format("%s (unix ts: %s)", var_0_78(var_0_165.update_timestamp, false, false, 1), var_0_165.update_timestamp) or "Not set")
-			else
-				client.error_log("No source selected")
-			end
-		else
-			client.error_log("Unknown helper command: " .. arg_140_0:gsub("^helper ", ""))
-
-			var_140_0 = true
-		end
-
-		if var_140_0 then
-			local var_140_12 = {
-				{
-					"help",
-					"Displays this help info"
-				},
-				{
-					"map_pattern",
-					"Displays map pattern debug info"
-				},
-				{
-					"source",
-					"Displays information about the current source"
-				},
-				{
-					"source stats",
-					"Displays statistics for the currently selected source"
-				},
-				{
-					"source export_repo",
-					"Exports a local source into a repository file structure"
-				}
-			}
-			local var_140_13 = "\tKnown commands:"
-
-			for iter_140_7 = 1, #var_140_12 do
-				local var_140_14, var_140_15 = unpack(var_140_12[iter_140_7])
-
-				var_140_13 = var_140_13 .. string.format("\n\thelper %s - %s", var_140_14, var_140_15)
-			end
-
-			client.color_log(215, 215, 215, var_140_13)
-		end
-
-		return true
-	end
-end
-
 local function var_0_207()
 	local var_141_0 = ui.get(var_0_136)
 
@@ -5933,12 +5744,10 @@ local function var_0_207()
 		client.set_event_callback("paint", var_0_199)
 		client.set_event_callback("setup_command", var_0_205)
 		client.set_event_callback("run_command", var_0_204)
-		client.set_event_callback("console_input", var_0_206)
 	else
 		client.unset_event_callback("paint", var_0_199)
 		client.unset_event_callback("setup_command", var_0_205)
 		client.unset_event_callback("run_command", var_0_204)
-		client.unset_event_callback("console_input", var_0_206)
 		var_0_196(true)
 		ui.set(var_0_124, true)
 	end
